@@ -1,10 +1,11 @@
 package com.veroprojects.TryingThings.controller;
 
 
-import com.veroprojects.TryingThings.controller.modelDTO.StudentIdDTO;
+import com.veroprojects.TryingThings.dto.StudentDto;
 import com.veroprojects.TryingThings.model.Student;
+import com.veroprojects.TryingThings.service.IStudentService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,29 +16,26 @@ import java.util.List;
 @RestController
 public class StudentController {
 
+        private IStudentService studentService;
+
+        @Autowired
+        public StudentController(IStudentService studentService) {
+                this.studentService = studentService;
+        }
         @PostMapping("/student")
-        public ResponseEntity<StudentIdDTO> createStudent(@RequestBody final Student student) {
-                System.out.println(student);
-                StudentIdDTO result = new StudentIdDTO("1");
-                return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.APPLICATION_JSON).body(result);
+        public ResponseEntity<StudentDto> createStudent(@RequestBody final StudentDto studentDto) {
+                return new ResponseEntity<>(studentService.createStudent(studentDto), HttpStatus.CREATED);
         }
 
 
         @GetMapping("/student")
-        public List<Student> getAllStudents() {
-                List<Student> result = new ArrayList<Student>();
-                Student student1 = new Student("1", "Romi", new BigDecimal("2323"));
-                result.add(student1);
-                Student student2 = new Student("2", "Lore", new BigDecimal("45454"));
-                result.add(student2);
-                Student student3 = new Student("2", "Lia", new BigDecimal("676"));
-                result.add(student3);
-                return result;
+        public ResponseEntity<List<StudentDto>> getAllStudents() {
+                return new ResponseEntity<>(studentService.getStudents(), HttpStatus.OK);
         }
 
         @GetMapping("/student/{id}")
         public Student getStudentById(@PathVariable final String id) {
-                Student student1 = new Student("1", "Romi", new BigDecimal("2323"));
+                Student student1 = new Student(1, "Romi", new BigDecimal("2323"));
                 return student1;
         }
 
