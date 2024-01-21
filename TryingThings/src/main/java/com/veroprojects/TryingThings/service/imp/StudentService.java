@@ -39,9 +39,25 @@ public class StudentService implements IStudentService {
     @Override
     public List<StudentDto> getStudents() {
         List<Student> students = studentRepository.findAll();
-        Student student = studentRepository.findById(343).orElseThrow( () -> new StudentNotFoundException("Student could not found by id"));
         return students.stream().map(s -> mapToDto(s)).collect(Collectors.toList());
 
+    }
+
+    public StudentDto getStudentById(int studentId) {
+        Student student = this.studentRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException("Student could not be found"));
+        return mapToDto(student);
+    }
+    public StudentDto updateStudent(StudentDto studentDto, int studentId) {
+        Student student = this.studentRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException("Student could not be found"));
+        student.setName(studentDto.getName());
+        student.setStudentNumber(studentDto.getStudentNumber());
+        this.studentRepository.save(student);
+        return this.mapToDto(student);
+    }
+
+    public void deleteStudent(int studentID) {
+        Student student = this.studentRepository.findById(studentID).orElseThrow(() -> new StudentNotFoundException("Student could not be found"));
+        this.studentRepository.delete(student);
     }
 
     private StudentDto mapToDto(Student student) {
@@ -51,4 +67,5 @@ public class StudentService implements IStudentService {
         studentDto.setId(student.getId());
         return studentDto;
     }
+
 }

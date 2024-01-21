@@ -1,12 +1,14 @@
 package com.veroprojects.TryingThings.model;
 
-
+import jakarta.persistence.*;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Student {
@@ -16,6 +18,9 @@ public class Student {
     private int id;
     private String name;
     private BigDecimal studentNumber;
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Review> reviews = new ArrayList<Review>();
 
     public Student(final int id,
                    final String name,
@@ -52,6 +57,14 @@ public class Student {
 
     public void setStudentNumber(BigDecimal studentNumber) {
          this.studentNumber = studentNumber;
+    }
+
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
     }
 
     @Override

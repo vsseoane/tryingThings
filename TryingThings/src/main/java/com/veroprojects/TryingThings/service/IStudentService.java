@@ -9,4 +9,9 @@ public interface IStudentService {
     StudentDto createStudent(StudentDto studentDTO);
 
     List<StudentDto> getStudents();
+
+    StudentDto getStudentById(int studentId);
+    StudentDto updateStudent(StudentDto studentDto, int studentId);
+
+    void deleteStudent(int studentID);
 }
