@@ -1,24 +1,36 @@
 package com.veroprojects.TryingThings.model;
 
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
 import java.math.BigDecimal;
 
+@Entity
 public class Student {
 
-    private final String id;
-    private final String name;
-    private final BigDecimal studentNumber;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+    private String name;
+    private BigDecimal studentNumber;
 
-    public Student(final String id,
+    public Student(final int id,
                    final String name,
                    final BigDecimal studentNumber) {
-        this.id = id;
         this.name = name;
         this.studentNumber = studentNumber;
 
 
     }
+    public Student() {
 
-    public String getId() {
+
+    }
+
+    public int getId() {
         return this.id;
     }
 
@@ -28,6 +40,18 @@ public class Student {
 
     public BigDecimal getStudentNumber() {
         return this.studentNumber;
+    }
+
+    public void setId(int id) {
+         this.id =id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setStudentNumber(BigDecimal studentNumber) {
+         this.studentNumber = studentNumber;
     }
 
     @Override
