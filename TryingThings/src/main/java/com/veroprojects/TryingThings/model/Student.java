@@ -22,8 +22,7 @@ public class Student {
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Review> reviews = new ArrayList<Review>();
 
-    public Student(final int id,
-                   final String name,
+    public Student(final String name,
                    final BigDecimal studentNumber) {
         this.name = name;
         this.studentNumber = studentNumber;

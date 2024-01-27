@@ -14,12 +14,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class ReviewService implements IReviewService {
+public class Review2Service implements IReviewService {
 
     IReviewRepository reviewRepository;
     IStudentRepository studentRepository;
 
-    public ReviewService(IReviewRepository reviewRepository, IStudentRepository studentRepository) {
+    public Review2Service(IReviewRepository reviewRepository, IStudentRepository studentRepository) {
         this.reviewRepository = reviewRepository;
         this.studentRepository = studentRepository;
     }
@@ -36,6 +36,7 @@ public class ReviewService implements IReviewService {
     }
 
     public List<ReviewDto> getReviewsByStudentId(int studentId) {
+        IReviewService.doSomething();
         List<Review> reviews = this.reviewRepository.findByStudentId(studentId);
         return reviews.stream().map(r -> this.mapReviewToDto(r)).collect(Collectors.toList());
     }

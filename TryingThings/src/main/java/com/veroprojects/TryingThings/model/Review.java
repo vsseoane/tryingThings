@@ -20,8 +20,7 @@ public class Review {
 
     public Review() {}
 
-    public Review(int id, String description, int score) {
-        this.id = id;
+    public Review(String description, int score) {
         this.description = description;
         this.score = score;
     }

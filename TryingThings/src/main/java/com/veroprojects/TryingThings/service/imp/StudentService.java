@@ -19,6 +19,7 @@ public class StudentService implements IStudentService {
 
     @Autowired
     public StudentService(IStudentRepository studentRepository) {
+
         this.studentRepository = studentRepository;
     }
     @Override

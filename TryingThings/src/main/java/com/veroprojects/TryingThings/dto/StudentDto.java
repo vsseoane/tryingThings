@@ -8,6 +8,12 @@ public class StudentDto {
     private String name;
     private BigDecimal studentNumber;
 
+    public StudentDto() {}
+    public StudentDto(String name, BigDecimal studentNumber) {
+        this.name = name;
+        this.studentNumber = studentNumber;
+    }
+
     public int getId() {
         return id;
     }
