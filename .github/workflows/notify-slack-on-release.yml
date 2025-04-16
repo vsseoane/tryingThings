@@ -36,5 +36,5 @@ jobs:
           custom_payload: |
             {
               "channel": "#in-store-releases",
-              "text": "📦 *Nuevo merge a `${{ github.ref_name }}`*\n🔹 *Título del PR:* '${{ steps.pr.outputs.result }}'\n🔸 *Autor:* <@${{ github.actor }}>\n🔹 *Commit:* <${{ steps.commit_url.outputs.url }}|Ver en GitHub>\n\n🧩 *Estado actual:*\n- Staging: ⬜️\n- Código en laboratorio: ⬜️\n- Flag activa en lab: ⬜️\n- Código en stable: ⬜️\n- Flag activa en stable: ⬜️\n\n👉 Completa el hilo con:\n1. ¿Pruebas en staging?\n2. ¿Validación en laboratorio?\n3. ¿Deuda técnica?"
+              "text": "📦 *Nuevo merge a `${{ github.ref_name }}`*\n🔹 *Título del PR:* '${{ steps.pr.outputs.result }}'\n🔸 *Autor:* <@${{ github.actor }}>\n🔹 *Commit:* <${{ steps.commit_url.outputs.url }}|Ver en GitHub>\n\n👉 Completa el hilo con:\n\n## Release Details\n- \n\n---\n\n## Contiene breaking changes o genera downtime?\n- \n\n---\n\n## Activo más de una feature/refactor con la misma flag?\n- \n\n---\n\n## Qué he probado en staging antes de activar en laboratorio\n\n---\n\n## Ha ido todo bien en lab antes de subir a stable?\n\n---\n\n## Cómo he validado en laboratorio antes de activar en stable\n- \n\n---\n\n## Estoy generando deuda? ¿Cuál?\n\n## Otras notas"
             }
