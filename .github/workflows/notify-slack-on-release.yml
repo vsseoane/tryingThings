@@ -27,14 +27,20 @@ jobs:
         run: echo "url=https://github.com/${{ github.repository }}/commit/${{ github.sha }}" >> $GITHUB_OUTPUT
 
       - name: Send to Slack
-        uses: 8398a7/action-slack@v3
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        with:
-          status: custom
-          fields: repo,message,commit,author
-          custom_payload: |
-            {
-              "channel": "#in-store-releases",
-              "text": "📦 *Nuevo merge a `${{ github.ref_name }}`*\n🔹 *Título del PR:* '${{ steps.pr.outputs.result }}'\n🔸 *Autor:* <@${{ github.actor }}>\n🔹 *Commit:* <${{ steps.commit_url.outputs.url }}|Ver en GitHub>\n\n👉 Completa el hilo con:\n\n*Release Details*\n\n• **Contiene breaking changes o genera downtime?**\n   - \n\n• **Activo más de una feature/refactor con la misma flag?**\n   - \n\n• **Qué he probado en staging antes de activar en laboratorio?**\n   - \n\n• **Ha ido todo bien en lab antes de subir a stable?**\n   - \n\n• **Cómo he validado en laboratorio antes de activar en stable?**\n   - \n\n• **Estoy generando deuda? ¿Cuál?**\n   - \n\n• **Otras notas:**\n   -"
-            }
+              uses: 8398a7/action-slack@v3
+              env:
+                SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+              with:
+                status: custom
+                fields: repo,message,commit,author
+                custom_payload: |
+                  {
+                    "channel": "#in-store-releases",
+                    "text": "📦 *Nuevo merge a `${{ github.ref_name }}`*\n🔹 *Título del PR:* '${{ steps.pr.outputs.result }}'\n🔸 *Autor:* <@${{ github.actor }}>\n🔹 *Commit:* <${{ steps.commit_url.outputs.url }}|Ver en GitHub>",
+                    "thread_ts": "{{ steps.commit_url.outputs.url }}", 
+                    "attachments": [
+                      {
+                        "text": "👉 Completa el hilo con:\n\n*Release Details*\n\n• **Contiene breaking changes o genera downtime?**\n   - \n\n• **Activo más de una feature/refactor con la misma flag?**\n   - \n\n• **Qué he probado en staging antes de activar en laboratorio?**\n   - \n\n• **Ha ido todo bien en lab antes de subir a stable?**\n   - \n\n• **Cómo he validado en laboratorio antes de activar en stable?**\n   - \n\n• **Estoy generando deuda? ¿Cuál?**\n   - \n\n• **Otras notas:**\n   -"
+                      }
+                    ]
+                  }
