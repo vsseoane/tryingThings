@@ -1,0 +1,43 @@
+name: Notify Slack on Merge to Stable
+
+on:
+  push:
+    branches:
+      - main
+      - stable
+
+jobs:
+  slack-notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get PR info
+        uses: actions/github-script@v6
+        id: pr_info
+        with:
+          result-encoding: string
+          script: |
+            const pr = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: context.sha,
+            });
+            return pr.data[0]?.title || "Sin título de PR";
+
+      - name: Send notification to Slack
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          PR_TITLE: ${{ steps.pr_info.outputs.result }}
+          GITHUB_ACTOR: ${{ github.actor }}
+          COMMIT_URL: https://github.com/${{ github.repository }}/commit/${{ github.sha }}
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data "{
+            \"text\": \"📦 *Nuevo merge a \`${{ github.ref_name }}\`*\n
+🔹 *Título del PR:* ${PR_TITLE}
+🔸 *Autor:* @${GITHUB_ACTOR}
+🔹 *Commit:* <${COMMIT_URL}|Ver en GitHub>\n
+👉 Completa el hilo con:
+1. ¿Pruebas en staging?
+2. ¿Validación en laboratorio?
+3. ¿Deuda técnica?\"
+          }" $SLACK_WEBHOOK_URL
+
