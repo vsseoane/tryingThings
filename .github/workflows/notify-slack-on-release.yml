@@ -21,11 +21,12 @@ jobs:
               commit_sha: context.sha,
             });
             const pr = prList.data[0];
-            if (!pr) return { title: "Sin título de PR", assignees: [] };
+            if (!pr) return { title: "Sin título de PR", assignees: [], branch: "desconocida" };
             const assignees = pr.assignees.map(a => `<@${a.login}>`).join(', ') || "Sin asignados";
             return {
               title: pr.title,
-              assignees: assignees
+              assignees: assignees,
+              branch: pr.head.ref
             };
 
       - name: Set commit URL
@@ -42,5 +43,5 @@ jobs:
           custom_payload: |
             {
               "channel": "#in-store-releases",
-              "text": "📦 *Nuevo merge a `${{ github.ref_name }}`*\n🔹 Título del PR: '${{ fromJson(steps.pr.outputs.result).title }}'\n🔸 Asignados: ${{ fromJson(steps.pr.outputs.result).assignees }}\n🔹 Commit: <${{ steps.commit_url.outputs.url }}|Ver en GitHub>\n\n👉 Completa el hilo con:\n\nRelease Details\n\n• Contiene breaking changes o genera downtime?\n• Activo más de una feature/refactor con la misma flag?\n• Qué he probado en staging antes de activar en laboratorio?\n• Ha ido todo bien en lab antes de subir a stable?\n• Cómo he validado en laboratorio antes de activar en stable?\n• Estoy generando deuda? ¿Cuál?\n"
+              "text": ":package: Nuevo merge a `${{ github.ref_name }}`\n:small_blue_diamond: Título del PR: '${{ fromJson(steps.pr.outputs.result).title }}'\n:small_orange_diamond: Asignados: ${{ fromJson(steps.pr.outputs.result).assignees }}\n:small_blue_diamond: Rama: `${{ fromJson(steps.pr.outputs.result).branch }}`\n:small_blue_diamond: Commit: <${{ steps.commit_url.outputs.url }}|Ver en GitHub>\n\n:point_right: Completa el hilo con:\nRelease Details\n• Contiene breaking changes o genera downtime?\n• Activo más de una feature/refactor con la misma flag?\n• Qué he probado en staging antes de activar en laboratorio?\n• Ha ido todo bien en lab antes de subir a stable?\n• Cómo he validado en laboratorio antes de activar en stable?\n• Estoy generando deuda? ¿Cuál?\n"
             }
