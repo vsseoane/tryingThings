@@ -1,10 +1,35 @@
-uses: 8398a7/action-slack@v3
-with:
-  status: custom
-  fields: repo,message,commit,author
-  custom_payload: |
-    {
-      "text": "A new push to *main* branch by ${{ github.actor }}\nCommit: ${{ github.event.head_commit.message }}"
-    }
-env:
-  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+name: Notify Slack on Merge to Stable
+on:
+  push:
+    branches:
+      - main
+      - stable
+
+jobs:
+  slack-notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get PR info
+        uses: actions/github-script@v6
+        id: pr
+        with:
+          result-encoding: string
+          script: |
+            const pr = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: context.sha,
+            });
+            return pr.data[0]?.title || "Sin título de PR";
+
+      - name: Send to Slack via slackapi/slack-github-action
+        uses: 8398a7/action-slack@v3
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        with:
+          status: custom
+          fields: repo,message,commit,author
+          custom_payload: |
+            {
+              "text": "A new push to *main* branch by ${{ github.actor }}\nCommit: ${{ github.event.head_commit.message }}"
+            }
