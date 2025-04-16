@@ -22,7 +22,11 @@ jobs:
             });
             return pr.data[0]?.title || "Sin título de PR";
 
-      - name: Send to Slack via slackapi/slack-github-action
+      - name: Set commit URL
+        id: commit_url
+        run: echo "url=https://github.com/${{ github.repository }}/commit/${{ github.sha }}" >> $GITHUB_OUTPUT
+
+      - name: Send to Slack
         uses: 8398a7/action-slack@v3
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
@@ -31,5 +35,6 @@ jobs:
           fields: repo,message,commit,author
           custom_payload: |
             {
-              "text": "A new push to *main* branch by ${{ github.actor }}\nCommit: ${{ github.event.head_commit.message }}"
+              "channel": "#in-store-releases",
+              "text": "📦 *Nuevo merge a `${{ github.ref_name }}`*\n🔹 *Título del PR:* '${{ steps.pr.outputs.result }}'\n🔸 *Autor:* <@${{ github.actor }}>\n🔹 *Commit:* <${{ steps.commit_url.outputs.url }}|Ver en GitHub>\n\n👉 Completa el hilo con:\n1. ¿Pruebas en staging?\n2. ¿Validación en laboratorio?\n3. ¿Deuda técnica?"
             }
