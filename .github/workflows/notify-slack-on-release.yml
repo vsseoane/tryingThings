@@ -13,14 +13,21 @@ jobs:
         uses: actions/github-script@v6
         id: pr
         with:
-          result-encoding: string
+          result-encoding: json
           script: |
-            const pr = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+            const prList = await github.rest.repos.listPullRequestsAssociatedWithCommit({
               owner: context.repo.owner,
               repo: context.repo.repo,
               commit_sha: context.sha,
             });
-            return pr.data[0]?.title || "Sin título de PR";
+            const pr = prList.data[0];
+            if (!pr) return { title: "Sin título de PR", assignees: [] };
+            const assignees = pr.assignees.map(a => `<@${a.login}>`).join(', ') || "Sin asignados";
+            return {
+              title: pr.title,
+              assignees: assignees
+            };
+
       - name: Set commit URL
         id: commit_url
         run: echo "url=https://github.com/${{ github.repository }}/commit/${{ github.sha }}" >> $GITHUB_OUTPUT
@@ -35,5 +42,5 @@ jobs:
           custom_payload: |
             {
               "channel": "#in-store-releases",
-              "text": "📦 *Nuevo merge a `${{ github.ref_name }}`*\n🔹 *Título del PR:* '${{ steps.pr.outputs.result }}'\n🔸 *Autor:* <@${{ github.actor }}>\n🔹 *Commit:* <${{ steps.commit_url.outputs.url }}|Ver en GitHub>\n\n👉 Completa el hilo con:\n\nRelease Details\n\n• Contiene breaking changes o genera downtime?\n• Activo más de una feature/refactor con la misma flag?\n• Qué he probado en staging antes de activar en laboratorio?\n• Ha ido todo bien en lab antes de subir a stable?\n• Cómo he validado en laboratorio antes de activar en stable?\n• Estoy generando deuda? ¿Cuál?\n"
+              "text": "📦 *Nuevo merge a `${{ github.ref_name }}`*\n🔹 Título del PR: '${{ fromJson(steps.pr.outputs.result).title }}'\n🔸 Asignados: ${{ fromJson(steps.pr.outputs.result).assignees }}\n🔹 Commit: <${{ steps.commit_url.outputs.url }}|Ver en GitHub>\n\n👉 Completa el hilo con:\n\nRelease Details\n\n• Contiene breaking changes o genera downtime?\n• Activo más de una feature/refactor con la misma flag?\n• Qué he probado en staging antes de activar en laboratorio?\n• Ha ido todo bien en lab antes de subir a stable?\n• Cómo he validado en laboratorio antes de activar en stable?\n• Estoy generando deuda? ¿Cuál?\n"
             }
