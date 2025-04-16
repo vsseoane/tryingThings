@@ -26,7 +26,8 @@ jobs:
         id: commit_url
         run: echo "url=https://github.com/${{ github.repository }}/commit/${{ github.sha }}" >> $GITHUB_OUTPUT
 
-      - name: Send to Slack
+      - name: Send Merge Notification to Slack
+        id: slack-message
         uses: 8398a7/action-slack@v3
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
@@ -49,6 +50,6 @@ jobs:
           custom_payload: |
             {
               "channel": "#in-store-releases",
-              "thread_ts": "${{ steps.send_to_slack.outputs.ts }}", 
+              "thread_ts": "${{ steps.slack-message.outputs.ts }}", 
               "text": "👉 Completa el hilo con:\n\n*Release Details*\n\n• **Contiene breaking changes o genera downtime?**\n   - \n\n• **Activo más de una feature/refactor con la misma flag?**\n   - \n\n• **Qué he probado en staging antes de activar en laboratorio?**\n   - \n\n• **Ha ido todo bien en lab antes de subir a stable?**\n   - \n\n• **Cómo he validado en laboratorio antes de activar en stable?**\n   - \n\n• **Estoy generando deuda? ¿Cuál?**\n   - \n\n• **Otras notas:**\n   -"
             }
