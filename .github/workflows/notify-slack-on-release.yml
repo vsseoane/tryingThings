@@ -23,7 +23,7 @@ jobs:
             return pr.data[0]?.title || "Sin título de PR";
 
       - name: Send to Slack via slackapi/slack-github-action
-        uses: slackapi/slack-github-action@v1.28.0
+        uses: slackapi/slack-github-action@v1.27.0
         with:
           payload: |
             {
