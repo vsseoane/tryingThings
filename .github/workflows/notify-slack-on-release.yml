@@ -1,5 +1,4 @@
 name: Notify Slack on Merge to Stable
-
 on:
   push:
     branches:
@@ -12,7 +11,7 @@ jobs:
     steps:
       - name: Get PR info
         uses: actions/github-script@v6
-        id: pr_info
+        id: pr
         with:
           result-encoding: string
           script: |
@@ -23,21 +22,12 @@ jobs:
             });
             return pr.data[0]?.title || "Sin título de PR";
 
-      - name: Send notification to Slack
+      - name: Send to Slack via slackapi/slack-github-action
+        uses: slackapi/slack-github-action@v1.28.0
+        with:
+          payload: |
+            {
+              "channel": "#in-store-releases",
+              "text": "📦 *Nuevo merge a `${{ github.ref_name }}`*\n🔹 *PR:* ${{ steps.pr.outputs.result }}\n🔸 *Autor:* <@${{ github.actor }}>\n🔹 *Commit:* <https://github.com/${{ github.repository }}/commit/${{ github.sha }}|Ver en GitHub>\n\n👉 Completa el hilo con:\n1. ¿Pruebas en staging?\n2. ¿Validación en laboratorio?\n3. ¿Deuda técnica?"
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          PR_TITLE: ${{ steps.pr_info.outputs.result }}
-          GITHUB_ACTOR: ${{ github.actor }}
-          COMMIT_URL: https://github.com/${{ github.repository }}/commit/${{ github.sha }}
-        run: |
-          curl -X POST -H 'Content-type: application/json' --data "{
-            \"text\": \"📦 *Nuevo merge a \`${{ github.ref_name }}\`*\n
-🔹 *Título del PR:* ${PR_TITLE}
-🔸 *Autor:* @${GITHUB_ACTOR}
-🔹 *Commit:* <${COMMIT_URL}|Ver en GitHub>\n
-👉 Completa el hilo con:
-1. ¿Pruebas en staging?
-2. ¿Validación en laboratorio?
-3. ¿Deuda técnica?\"
-          }" $SLACK_WEBHOOK_URL
-
