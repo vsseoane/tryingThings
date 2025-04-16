@@ -1,35 +1,10 @@
-name: Notify Slack on Merge to Stable
-on:
-  push:
-    branches:
-      - main
-      - stable
-
-jobs:
-  slack-notify:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Get PR info
-        uses: actions/github-script@v6
-        id: pr
-        with:
-          result-encoding: string
-          script: |
-            const pr = await github.rest.repos.listPullRequestsAssociatedWithCommit({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              commit_sha: context.sha,
-            });
-            return pr.data[0]?.title || "Sin título de PR";
-
-      - name: Send to Slack via slackapi/slack-github-action
-        uses: slackapi/slack-github-action@v1.27.0
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        with:
-          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
-          webhook-type: incoming-webhook
-          slack-message: |
-            {
-              "channel": "#in-store-releases",
-              "text": "📦 *Nuevo merge a `${{ github.ref_name }}`*\n🔹 *PR:* ${{ steps.pr.outputs.result }}\n🔸 *Autor:* <@${{ github.actor }}>\n🔹 *Commit:* <https://github.com/${{ github.repository }}/commit/${{ github.sha }}|Ver en GitHub>\n\n👉 Completa el hilo con:\n1. ¿Pruebas en staging?\n2. ¿Validación en laboratorio?\n3. ¿Deuda técnica?"
+uses: 8398a7/action-slack@v3
+with:
+  status: custom
+  fields: repo,message,commit,author
+  custom_payload: |
+    {
+      "text": "A new push to *main* branch by ${{ github.actor }}\nCommit: ${{ github.event.head_commit.message }}"
+    }
+env:
+  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
